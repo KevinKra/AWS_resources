@@ -52,11 +52,15 @@ Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => N
 
 #### Private IP Address
 
-Private IP addresses are not reachable over the internet. Rather, they are used for communication between instances in the same network. When you launch a new instance, it is given a private IP address and an internal DNS host name that resolves to the private IP address of the instance.
+Private IP addresses are not reachable over the internet. Rather, they are used for communication between instances in the same network. When you launch a new instance, it is given a private IP address and an internal DNS hostname that resolves to the private IP address of the instance.
 
 #### Public IP Address
 
+Public IP addresses are reachable over the internet. They can be used between for communication between instances and the internet. Each instance that is given a public IP address is given an _external_ DNS hostname. Public IP addresses are associated with your instances from the Amazon Public Pool of addresses. When you stop or terminate your instance your public IP address is released and a new one is assigned when your instance starts. If you want to retain your public IP address through these operations you need to use an **Elastic IP Address**.
+
 #### Elastic IP Address
+
+- Elastic IP Addresses are static or persistent public IP addresses that are allocated to your account and can be associated with instances as you require. They can be disassociated with your account when no longer needed. They will incur a charge while being reserved but not actually used.
 
 ---
 
@@ -70,11 +74,26 @@ Private IP addresses are not reachable over the internet. Rather, they are used 
 
 ### Internet Gateway
 
+> An internet gateway is a horizontally scaled, redundant, and highly available VPC component that allows for communication between instances in your VPC and the internet. It therefore imposes no availability risks or bandwidth constraints on your network traffic.
+
+- You can only attach **one IGW per VPC**.
+
+#### Connecting EC2 Instances to the Internet
+
+1. IGW must be connected to the VPC.
+2. All instances in your subnet must have either a public IP address or an elastic IP address.
+3. Ensure subnet's route table points to the internet gateway.
+4. All NACL and Security Groups must be configured to allow the required traffic to and from your instance.
+
 ### Router
 
 ### Route Tables
 
 > A _route table_ contains a set of rules, called _routes_, that are used to determine where network traffic from your subnet or gateway is directed.
+
+- Each subnet in your VPC must be associated with a route table; the table controls routing for the subnet. A subnet can only be associated with one route table at a time, but you can associated multiple subnets with the same route table.
+
+- Every VPC has a default root table and its good practice to leave it in its original state. Instead of changing the default root table, create a new root table to customize the network traffic associated with your vpc.
 
 #### Key Terms
 
@@ -150,15 +169,44 @@ Your VPC has an _implicit_ router, and you use route tables to control where tra
 - Stateless: Return **traffic must be explicitly allowed** by rules
 - Automatically applies to _all_ instances in the subnet, which provides a nice blanket in the event an instance is missed
 
-### VPC NAT Gateway
+### NAT Device - Network Address Translation Device
+
+> Use to connect EC2 instances in private subnets to connect to the internet or other AWS services, _but_ prevents the internet from initiating connections with instances within the private subnet.
+
+- Private Subnet database instance may need internet access or the ability to connect to other AWS services.
+- Forwards traffic from your private subnet to the internet or AWS services and returns the response back to the instances.
+- When traffic goes to the internet the source IP address of your instance is replaced by the NAT device address and when the traffic comes back, the NAT device translates the address to your instance's private ID address.
+- **NAT devices have to be in a public subnet so they get internet connectivity.**
+
+#### NAT Gateway vs NAT instance
+
+AWS provides two kinds of NAT devices. AWS recommends the NAT gateway because its a managed service with better availability and bandwidth than instances. Each NAT Gateway is created in a specific AZ with redundancy in that zone.
+
+- NAT Instance is launched from a NAT AMI and runs as an instance in your VPC. Requires extra management and legwork.
+
+- **NAT Gateways require an Elastic IP Address.**
+- Once created you need to update your root table associated w/ private subnet to point internet bound traffic to the NAT Gateway.
 
 ### VGW - Virtual Private Gateway
 
 - The VPN concentrator on the AWS side of a hybrid network solution. It connects _via a VPN connection_ to customer networks via a **Customer Gateway** that exists on their resources.
 
+* A VPC spans all the AZs in a region, a subnet is _always_ mapped to a single AZ.
+* The netmask for your VPC's default subnet is always 20, which provides 4096 addresses.
+* _NO_ subnets are automatically created when a VPC is created.
+* You _cannot_ launch instances in a VPC **unless** their are subnets in your VPC.
+
 ### Subnets
 
-> A VPC spans all the AZs in a region. _NO_ subnets are automatically created when a VPC is created.
+A range of IP addresses in your VPC. A public subnet is used for resources that must be connected to the internet and a private subnet is used for resources that won't be connected to the internet.
+
+#### Public Subnets
+
+- Public subnets are _made_ public because the main Route Table sends the Public Subnet's traffic, that is destined for the internet, to the Internet Gateway.
+
+#### Private Subnets
+
+- Protects resources that don't need connection to the internet or you want to protect from the internet, for example Databases instances.
 
 #### Design
 
