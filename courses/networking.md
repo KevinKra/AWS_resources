@@ -9,7 +9,7 @@
 Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => Network ACL => Public/Private Subnet + (Security Group + Instance)
 ```
 
-### What can you do with a VPC
+#### What can you do with a VPC
 
 - Launch instances into a subnet of your choosing.
 - Assign custom IP address ranges in each subnet.
@@ -19,27 +19,44 @@ Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => N
 - Instance security groups.
 - Subnet network Access Control Lists (ACLs.)
 
-### Default VPC vs Custom VPC
+#### Default VPC vs Custom VPC
 
 - Amazon provisions an default VPC in every region.
-- Default VPC is user friendly, allowing you to immediately deploy instances.
+- Default VPC always has a default CIDR block with a 16-subnet mask - 172.31.0.0/16 .
+- Default VPC is user friendly, allowing you to immediately deploy instances for testing purposes.
+- Custom VPC allows you to tighten down security settings.
 - All subnets in default VPC have a route to the internet, no private subnets in default VPCs.
 - Each EC2 instance has a both public and private IP address.
 
-### VPC Peering
+#### VPC Peering
 
-- Allows VPCs to connect to another via direct network route using private IP addresses.
+- Allows VPCs to connect to another via direct network route using private IP addresses, _as long as they're in the same region_.
 - Instances behave as if they were on the same private network.
 - You can peer VPCs with other AWS accounts as well as the same account.
 - Peering is int a star configuration. 1 central VPC peers w/ 4 others. **NO TRANSITIVE PEERING**.
+- Transitive Peering: One VPC cannot connect to the link of it's link. The link must be direct.
+- VPCs without overlapping CIDRs _cannot_ be paired.
+- If you delete the default VPC you have to called AWS to restore it.
 
-### Exam Tips
+#### Exam Tips
 
 - VPC consists of IGWs/VPGs, Route Tables, Network Access Control Lists, Subnets, and Security Groups
 - 1 Subnet = 1 AZ
 - Security Groups are Stateful
 - Network ACLs are stateless
 - No transitive peering
+
+---
+
+## Connectivity
+
+#### Private IP Address
+
+Private IP addresses are not reachable over the internet. Rather, they are used for communication between instances in the same network. When you launch a new instance, it is given a private IP address and an internal DNS host name that resolves to the private IP address of the instance.
+
+#### Public IP Address
+
+#### Elastic IP Address
 
 ---
 
@@ -133,9 +150,15 @@ Your VPC has an _implicit_ router, and you use route tables to control where tra
 - Stateless: Return **traffic must be explicitly allowed** by rules
 - Automatically applies to _all_ instances in the subnet, which provides a nice blanket in the event an instance is missed
 
+### VPC NAT Gateway
+
+### VGW - Virtual Private Gateway
+
+- The VPN concentrator on the AWS side of a hybrid network solution. It connects _via a VPN connection_ to customer networks via a **Customer Gateway** that exists on their resources.
+
 ### Subnets
 
-> A VPC spans all the AZs in a region. After creating
+> A VPC spans all the AZs in a region. _NO_ subnets are automatically created when a VPC is created.
 
 #### Design
 
