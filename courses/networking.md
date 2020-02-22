@@ -46,6 +46,30 @@ Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => N
 - Network ACLs are stateless
 - No transitive peering
 
+### Best Practices
+
+- Always use Public and Private subnets. Use a NAT device for situations where a private subnet needs to access the internet.
+- Use NAT Gateways over NAT Instances because they are a managed service and require less administration effort.
+- Choose CIDR blocks carefully. VPC can contain between 16 to 65536 IP addresses.
+- Two practices: Either create separate VPCs for Development, Staging, and Production or create one Amazon VPC with separate subnets for each environment.
+- Understand VPC limits:
+  - 5 VPCs for region
+  - 200 subnets per VPC
+  - 200 route tables per VPC
+  - 500 security groups per VPC
+  - 50 inbound or outbound rules per VPC
+  - Some rules can be increased by raising a ticket with AWS Support
+- Use security groups and network ACLs to secure traffic coming in and out of a VPC. SGs for whitelisting, NACLs for blacklisting
+- Create different security groups for different tiers of infrastructure architecture inside a VPC. For instance, launching all web servers with the Web Server Security group means they'll all have the same traffic permissions.
+- Standardizing your naming conventions.
+- Always span your VPC across multiple subnets across multiple availability zones.
+
+### Costs
+
+- Creating a hardware VPN connection via VGW you are charged for each VPN Connection Hour for each VPN connection is provisioned and available.
+- Partial hours are charged for full hour as well.
+- NAT Gateway charges for each hour its provisioned, data processing applies for each gigabyte processed through the gigabyte.
+
 ---
 
 ## Connectivity
@@ -153,21 +177,30 @@ Your VPC has an _implicit_ router, and you use route tables to control where tra
 
 > An _optional_ layer of security for your VPC that acts as a firewall for controlling traffic in and out of one or more subnets. You may set up network ACLs with rules similar to your security groups in order to add an additional layer of security to your VPC.
 
+#### Rules
+
+- Each subnet in your VPC must be associated with an ACL.
+- A subnet can only be associated with **one** ACL. However, an ACL can be associated with multiple subnets.
+- An ACL contains a list of numbered rules which are evaluated in order, starting with the lowest. As soon as a rule matches the traffic, higher level rules are disregarded. AWS recommends incrementing rules by a factor of 100, so there would be plenty of room to add new rules at a later date.
+- ACLs are stateless; responses to allowed inbound traffic are subject to the rules for outbound traffic.
+
 #### ACL vs Security Groups
 
 **Security Group**
 
-- Operates at the instance level
-- Supports allow rules only
-- Stateful: Return traffic is **automically allowed**, regardless of rules
-- Only applies to an instance if someone specifies initially or at a later period
+- Operates at the instance level.
+- Supports allow rules only.
+- Stateful: Return traffic is **automically allowed**, regardless of rules.
+- Only applies to an instance if someone specifies initially or at a later period.
 
 **Network ACL**
 
-- Operates at the subnet level
-- Supports allow rules and deny rules
-- Stateless: Return **traffic must be explicitly allowed** by rules
-- Automatically applies to _all_ instances in the subnet, which provides a nice blanket in the event an instance is missed
+- Operates at the subnet level.
+- Supports allow rules and deny rules.
+- Stateless: Return **traffic must be explicitly allowed** by rules.
+- Automatically applies to _all_ instances in the subnet, which provides a nice blanket in the event an instance is missed.
+- sits between a route table and subnet.
+- The rule with `*` effectively denies all packets that don't match what is allowed by the numbered rules of the ACL. Is essentially a catch all at the end of the possible rules.
 
 ### NAT Device - Network Address Translation Device
 
@@ -215,9 +248,16 @@ A range of IP addresses in your VPC. A public subnet is used for resources that 
 
 ### Security Group
 
-### Questions
+> A security group acts as a virtual firewall that controls the traffic for one or more instance. You add rules to each security group that allow traffic to or from its associated instances.
 
----
+#### Security Group Rules
+
+- By default, security groups allow all outbound traffic and no inbound.
+- Security groups are always permissive, you can only _allow_ access.
+- Security groups are stateful. If you send a request from your instance, the response traffic from that request is allowed to flow in **regardless** of the inbound security rules.
+- You can modify the rules of a security group at any time and the rules are applied immediately.
+
+### Questions
 
 - What is a VPC?
 - What is a VPC comprised of?
