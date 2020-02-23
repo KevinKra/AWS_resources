@@ -9,6 +9,55 @@
 Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => Network ACL => Public/Private Subnet + (Security Group + Instance)
 ```
 
+#### xxxxxxx
+
+- Does every region have a default vpc and subnets?
+- Describe the differences between a default VPC and a custom VPC.
+- Do default VPCs route to the internet?
+- What is the default VPC CIDR block and subnet mask?
+- What is VPC peering, do the VPCs need to be in the same region?
+- What are two ways a VPCs can peer?
+- Can you peer VPCs with VPCs on other accounts?
+- VPCs configure in what formation?
+- What is transitive peering?
+- Can VPCs with overlapping CIDR blocks pair?
+- Can you restore the default VPC if you delete it? How?
+- How many subnets can exist in an AZ?
+- Draw a diagram of five parts of a VPC.
+- What device can you use to give a private subnet access to the internet?
+- What does NAT stand for; which is better NAT Gateway or NAT instance. Why?
+- What are two solutions for handling different development environments with VPCs?
+- What are the VPC, Subnet, Route Table, and Inbound/Outbound limits?
+- SGs are for whitelisting, NACLs are for blacklisting. Explain.
+- Explain the approach of using SGs to tier your access rights.
+- Explain Private vs. Public IP addresses.
+- Do you retain your Public IP address after closing an instance? How can you change this?
+- Are you charged if your Elastic IP is idle?
+- What is a CIDR block?
+- Define egress, ingress.
+- What is an Internet Gateway (IGW) and how many can you have on a VPC?
+- What are the four VPC requirements for connecting an EC2 instance to the internet?
+- What is a route table, what are its routes called?
+- Do VPCs come with a default route table?
+- How many route tables can a subnet be associated with at one time?
+- Explain the targets: igw, eigw, pcx
+- Every route table has a default route, what is it, what is its purpose?
+- How many ACLs can a subnet have?
+- Can ACLs be associated with multiple subnets?
+- ACL rules are evaluated in what order, what happens when the first matching rule regarding the traffic is found?
+- What factor should you implement ACL rules by, why?
+- ACLs are stateless, what does that mean?
+- Security Groups are stateful, what does that mean? How does it differ from ACL stateless traffic?
+- What does the `*` mean regarding ACL traffic?
+- What does NAT stand for? What is the use case of a NAT Gateway?
+- Do NAT devices need to be in a public subnet?
+- Do NAT devices require an Elastic IP address?
+- Does AWS recommend NAT Gateways or NAT Instances? Why?
+- What is a VGW and in what situations is it used?
+- What is a netmask. what is the default subnet netmask and how many addresses does that map to?
+- Are subnets automatically created when a custom VPC is created?
+- Can you launch instances in a VPC without it having subnets?
+
 #### What can you do with a VPC
 
 - Launch instances into a subnet of your choosing.
@@ -22,7 +71,7 @@ Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => N
 #### Default VPC vs Custom VPC
 
 - Amazon provisions an default VPC in every region.
-- Default VPC always has a default CIDR block with a 16-subnet mask - 172.31.0.0/16 .
+- Default VPC always has a default CIDR block with a 16-subnet mask - 172.31.0.0/16
 - Default VPC is user friendly, allowing you to immediately deploy instances for testing purposes.
 - Custom VPC allows you to tighten down security settings.
 - All subnets in default VPC have a route to the internet, no private subnets in default VPCs.
@@ -33,7 +82,7 @@ Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => N
 - Allows VPCs to connect to another via direct network route using private IP addresses, _as long as they're in the same region_.
 - Instances behave as if they were on the same private network.
 - You can peer VPCs with other AWS accounts as well as the same account.
-- Peering is int a star configuration. 1 central VPC peers w/ 4 others. **NO TRANSITIVE PEERING**.
+- Peering is in a star configuration. 1 central VPC peers w/ 4 others. **NO TRANSITIVE PEERING**.
 - Transitive Peering: One VPC cannot connect to the link of it's link. The link must be direct.
 - VPCs without overlapping CIDRs _cannot_ be paired.
 - If you delete the default VPC you have to called AWS to restore it.
@@ -185,6 +234,8 @@ Your VPC has an _implicit_ router, and you use route tables to control where tra
 - ACLs are stateless; responses to allowed inbound traffic are subject to the rules for outbound traffic.
 
 #### ACL vs Security Groups
+
+---
 
 **Security Group**
 
