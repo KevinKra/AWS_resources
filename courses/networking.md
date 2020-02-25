@@ -16,7 +16,7 @@ Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => N
 - Do default VPCs route to the internet?
 - What is the default VPC CIDR block and subnet mask?
 - What is VPC peering, do the VPCs need to be in the same region?
-- What are two ways a VPCs can peer?
+- _What are two ways a VPCs can peer?_
 - Can you peer VPCs with VPCs on other accounts?
 - VPCs configure in what formation?
 - What is transitive peering?
@@ -54,9 +54,10 @@ Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => N
 - Do NAT devices require an Elastic IP address?
 - Does AWS recommend NAT Gateways or NAT Instances? Why?
 - What is a VGW and in what situations is it used?
-- What is a netmask. what is the default subnet netmask and how many addresses does that map to?
+- What is a netmask? What is the default subnet netmask and how many addresses does that map to?
 - Are subnets automatically created when a custom VPC is created?
 - Can you launch instances in a VPC without it having subnets?
+- What are the two requirements for setting up a NAT gateway?
 
 #### What can you do with a VPC
 
@@ -79,7 +80,7 @@ Internet Gateway(IGW)/Virtual Private Gateway(VPG) => Router => Route Table => N
 
 #### VPC Peering
 
-- Allows VPCs to connect to another via direct network route using private IP addresses, _as long as they're in the same region_.
+- Allows VPCs to connect to one another via direct network route using private IP addresses, _as long as they're in the same region_.
 - Instances behave as if they were on the same private network.
 - You can peer VPCs with other AWS accounts as well as the same account.
 - Peering is in a star configuration. 1 central VPC peers w/ 4 others. **NO TRANSITIVE PEERING**.
@@ -257,9 +258,9 @@ Your VPC has an _implicit_ router, and you use route tables to control where tra
 
 > Use to connect EC2 instances in private subnets to connect to the internet or other AWS services, _but_ prevents the internet from initiating connections with instances within the private subnet.
 
-- Private Subnet database instance may need internet access or the ability to connect to other AWS services.
+- A private subnet database instance may need internet access or the ability to connect to other AWS services.
 - Forwards traffic from your private subnet to the internet or AWS services and returns the response back to the instances.
-- When traffic goes to the internet the source IP address of your instance is replaced by the NAT device address and when the traffic comes back, the NAT device translates the address to your instance's private ID address.
+- When traffic goes to the internet the source IP address of your instance is replaced by the NAT device address and when the traffic comes back, the NAT device translates the address to your instance's private IP address.
 - **NAT devices have to be in a public subnet so they get internet connectivity.**
 
 #### NAT Gateway vs NAT instance
