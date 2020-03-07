@@ -16,6 +16,8 @@ e. [Databases](#databases-on-aws)
 
 f. [Serverless](#serverless-computing)
 
+> Lambda, API Gateway, Alexa, X-Ray
+
 g. [DynamoDB](#dynamo-db)
 
 h. [KMS and Encryption](#kms-encryption)
@@ -727,7 +729,7 @@ U-6tb1 - Bare Metal - Bare metal capabilities that eliminate virtualization over
 - Storage Gateways
 - CloudFront
 
-#### Moniters Host Level Metrics like:
+#### Monitors Host Level Metrics like:
 
 - CPU
 - Network
@@ -829,6 +831,244 @@ aws s3 cp index.html s3://hjkhjkhjkqweide123asddddWOW
 - Spread across 3 geographically distinct data centers
 - **Eventual Consistent Reads** (Default) - consistency is reached across all copies of data usually within 1 second. For applications that _don't_ need immediate write to read consistency.
 - **Strongly Consistent Reads** - When you write to DynamoDB table and you need to read that data within or less than 1 second. Essentially, will return a result that reflects all writes that received a successful response prior to the read. For applications that need immediate write to read consistency.
+
+---
+
+## Serverless Computing <a name="serverless-computing"></a>
+
+> Data Center >> IAAS(AWS) >> PAAS(ELastic Beanstalk) >> Containers >> Serverless
+
+## Lambda
+
+> Data Center >> Hardware >> Assembly Code/Protocols >> High Level Languages > Operating Systems > Application Layer/AWS APIs > AWS Lambda
+
+AWS Lambda is a compute service where you can upload your code and create a Lambda function. AWS Lambda takes care of provisioning and managing the servers that you use to run the code. You don't have to worry about operating systems, patching, scaling, etc.
+
+- Can be used as an event-driven compute service where Lambda runs code in response to events.
+- As a compute service to run code in response to HTTP requests using Amazon API Gateway or API calls made using AWS SDKs.
+
+### Lambda Pricing
+
+- First 1-million requests are free. \$0.20 per 1-million requests thereafter.
+- Duration, calculated from the time your code begins executing until it returns or otherwise terminates. Rounded up to the nearest 100 millisecond. The price depends on the amount of memory you allocate to your function. You are charged \$0.00001667 per GB-second used.
+
+### Lambda Version Control
+
+When you use versioning in AWS Lambda, you can publish one or more versions of your Lambda function. As a result, you can work with different variations of your Lambda function in your development workflow, such as development, beta, and production. Each Lambda function version as a unique **Amazon Resource Name (ARN).** After you publish a version it is immutable.
+
+- AWS Lambda maintains your latest function code in $LATEST. You _can_ edit the **$LATEST\*\* version. When you update your function code, AWS Lambda replaces the code in the \$LATEST version of the Lambda function.
+
+- Qualified ARN: The function with the suffix \$LATEST
+- Unqualified ARN: The function without the version suffix
+
+### Alias
+
+- After initially creating a Lambda function you can publish a version 1 of it. By creating an alias named PROD that points to version 1, you can now use the PROD alias to invoke version 1 of the Lambda function. Now, you can update the code (\$LATEST) with all of your improvements and then publish another stable and improved version (version 2). You can promote version 2 to production by remapping the PROD alias so that it points to version 2. If you find something wrong you can easily roll back the production version to version 1 by remapping the PROD alias so that it points to version 1.
+
+#### Key Features
+
+- No Servers
+- Continuous Scaling
+- Extremely cheap
+
+#### Lambda Triggers
+
+- API Gateway
+- AWS IoT
+- Alexa Skills Kit
+- Alexa Smart Home
+- Application Load Balancer
+- CloudFront
+- CloudWatch
+- CodeCommit
+- Cognito Sync Trigger
+- DynamoDB
+- Kinesis
+- S3
+- SNS
+- SQS
+
+### Step Functions
+
+- Step Functions allow you to visualize and test your serverless applications. Step Functions provide a graphical console to arrange and visualize the components of your application as a series of steps. This makes it simple to build and run multistep applications. Step Functions automatically trigger and tracks each step, and retries when there are errors, so your application executes in order and as expect. It logs the state of each step, so when things go wrong , you can diagnose and debug problems quickly.
+
+- **Sequential Steps** - upload file and then delete it
+- **Branching Steps** (Choice of Path) - select image format > load in database > end.
+- **Parallel Steps** - Process photo > trigger three functions to resize, facial recognition, extract meta data > then store data.
+
+- Great way to visualize a serverless application
+- Step functions automatically trigger and track each step
+- Step functions log the state of each step so if something goes wrong we can track it.
+
+### X-Ray
+
+- AWS X-Ray is a service that collects data about requests that your application serves, and provides tools you can use to view, filter, and gain insights into that data to identify issues and opportunities for optimization. For any traced request to your application, you can see detailed information not only about the request and response, but also about calls that your application makes to downstream AWS resources, microservices, databases, and HTTP web APIs.
+
+#### X-Ray Architecture
+
+- **X-Ray SDK**
+  - installed inside of application
+  - sends data to X-Ray Daemon
+- **X-Ray Daemon**
+  - Listens on UDP and send JSON over to X-Ray API
+- **X-Ray API**
+  - Stores data and creates X-Ray visualization
+- **Scripts and Tools**
+  - Communicate with Daemon or API directly
+
+#### X-Ray SDK
+
+> XXXXXXXXXXXXXXXXXXXXXX
+
+##### NOT FINISHED !!!!
+
+- The X-Ray SDK provides:
+- Interceptors to add to your code to trace incoming HTTP requests
+- Client handlers to instrument AWS SDK clients that your application uses to call other AWS services
+- An HTTP client to use to instrument calls to other internal and external HTTP web services
+- Integrates with ELB, Lambda, API Gateway, EC2, Elastic Beanstalk
+
+#### X-Ray Supported Languages
+
+- Java, Go, Node, Python, Ruby, .net
+
+#### Exam Blueprint
+
+- Lambda scales out (not up) automatically
+- Lambda functions are independent, 1 event = 1 function
+- Lambda is serverless
+- Serverless services: Lambda, API Gateway, DynamoDB, Serverless-Aurora, etc
+- Lambda functions can trigger other lambda functions
+- Architecture can get complicated. AWS X-ray allows you to debug lambda
+- Lambda can do things globally
+- Know your lambda triggers
+- You can have multiple versions of Lambda function
+- Latest version will use \$latest
+- Qualified version will use \$latest, unqualified will not have it
+- Versions are immutable
+- Can split traffic using aliases to different versions
+- Cannot split traffic with \$latest, instead create an alias to latest
+- S3 buckets can be used globally but are handled on a regional basis
+- Step functions are a great way to visualize your serverless application
+- Step functions automatically trigger and track each step
+- Step functions log the state of eah step so if something goes wrong you can track what went wrong and where
+- X-Ray interceptors are added to code to trace incoming HTTP requests
+- X-Ray client handlers to instrument AWS SDK clients that your application uses to call other AWS services
+- X-Ray an HTTP Client to use instruments calls to other internal or external HTTP web services
+- X-Ray integrates with: Lambda, ELB, API Gateway, EC2, Elastic Beanstalk
+- X-Ray integrates with: Java, Go, Node.js, Python, Ruby, .Net
+
+### Questions:
+
+- **What is Lamda?**
+- **What are two ways to implement Lambda?**
+- **How many initial requests are free, what is the price thereafter?**
+- **Explain the duration pricing for Lambda.**
+- **What are three key features of Lambda?**
+- **Does Lambda scale up automatically?**
+- **Are lambda functions independent?**
+- **Are there any RDS types that are serverless?**
+- **What AWS service allows for you to debug Lambda?**
+- Can lambda functions trigger other lambda functions?
+- **Is lambda global or regional?**
+- What are the lambda triggers?
+- Explain lambda version control.
+- What is ARN?
+- Where does lambda store your latest code?
+- What is lambda alias?
+- What does the qualified lambda version end with?
+- What does the unqualified lambda version end with?
+- **What are step functions?**
+- **What are the three types of step functions?**
+- What does AWS X-ray help resolve?
+- Can lambda be used globally, is it handled locally?
+- What are Step functions and what benefits does it provide?
+- Explain X-Ray.
+- What services does X-Ray integrate with?
+
+## API Gateway
+
+- API Gateway is a fully managed service that makes it easy for developers to publish, maintain, monitor, and secure APIs at any scale. With a few clicks you can create an API that acts as a "front door" for applications to access data, business logic, or functionality, from your back-end services such as applications running on EC2 code running on AWS Lambda, or any other web application.
+
+- REST APIs - REpresentational State Transfer - uses JSON
+- SOAP APIs - Simple Object Access Protocol - uses XML
+
+Handling SOAP - SOAP applications send their responses in XML format. API Gateway supports SOAP applications but only provides passthrough.
+
+#### Key Features
+
+- Exposes HTTPS endpoints to define a RESTful API
+- Serverlessly connect to services like Lambda and DynamoDB
+- Send each API endpoint to a different target
+- Run efficiently with low cost
+- Scales effortlessly
+- Track and control usage by API key
+- Throttle requests to prevent attacks
+- Connect to Cloudwatch to log all requests for monitoring
+- Maintain versions of your API
+
+#### Configuration
+
+- Define an API (container)
+- Define resources and nested resources (URL paths)
+- For each Resource:
+  - Select supported HTTP methods (verbs)
+  - Set security
+  - Choose target (EC2, Lambda, DynamoDB, etc.)
+  - Set request and response transformations
+- Deploy API to a Stage (prod, test, deploy)
+  - Uses API Gateway domain, by default
+  - Can use custom domain
+  - Supports AWS Certificate Manager: free SSL/TLS certs!
+
+#### API Caching
+
+- You can enable API Caching in Amazon API Gateway to cache your endpoint's response. With caching, you can reduce the number of calls made to your endpoint and also improve the latency of the requests to your API. When you enable caching for a stage, API Gateway caches responses from your endpoint for a specified time-to-live (TTL) period, in seconds. API Gateway then response to the request by looking up the endpoint response from the cache instead of making a request to your endpoint.
+
+#### API Throttling
+
+- By default, API Gateway limits the steady-state request rate to **10,000 requests per second**
+- **The maximum concurrent requests is 5000 requests** across all APIs within an AWS account
+- If you go over 10,000 RPS or 5000 concurrent requests you will receive a **429 Too Many Requests** error response
+
+#### Same-Origin Policy
+
+**Same-origin policy** is a web policy where a web browser permits scripts contained in a first web page to access data in a second webpage, but only if both webpages have a same origin.
+
+#### Cross-Origin Resource Sharing (CORS)
+
+**CORS** is a mechanism that allows restricted resources on a web page to be requested from another domain outside the domain which the first resource was served.
+
+#### Import APIs
+
+- You can use the **API Gateway Import** API feature to import an API from an external definition file into API Gateway. Currently, the import API feature supports Swagger v2.0 definition files
+- API can be updated with POST or PUT
+
+### Exam Blueprints
+
+- API Gateway has caching capabilities
+- API Gateway is low cost and scales automatically
+- You can throttle API Gateway to prevent attacks
+- You can log results to CloudWatch
+- If you are using JS that uses multiple domains with API Gateway, ensure you enable CORS on API Gateway
+- CORS is enforced by the client
+- API Gateway _can_ be configured as a SOAP web-service passthrough
+- Where can you log results to?
+- Swagger is used to leverage an existing API within AWS
+
+### Questions:
+
+- **What is API Gateway?**
+- **What are two types of API Design, what language does each use?**
+- **What are some key features of API Gateway?**
+- **What is the general configuration of API Gateway?**
+- **What is API Caching?**
+- **Explain CORS.**
+- Can API Gateway throttle DDOS attacks?
+- How does API Gateway deal with legacy SOAP applications?
+- What is the Swagger tool used for?
+
+---
 
 ## Review Section
 
