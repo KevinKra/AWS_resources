@@ -1,4 +1,4 @@
-## Introduction
+## DynamoDB Quiz
 
 https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html
 
@@ -106,6 +106,22 @@ https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Core
 - **If you use the AWS Management Console to create a table or global secondary index, is auto scaling enabled by default?**
 - **Is reserved capacity available on on-demand mode?**
 
+#### Partitions and Data Distribution
+
+- **What is a partition and what are they stored on in DynamoDB?**
+- **How many regions does a DynamoDB table exist on?**
+- **Is partition management a managed service?**
+- **What are the two statuses of tables during creation? What happens during the first stage?**
+- **What two situations would cause DynamoDB to allocate additional partitions to a table?**
+- **Is your table available throughout partition operations happening automatically in the background?**
+- **If your table has a simple primary key, what does DynamoDB store and retrieve items based on?**
+- **How does DynamoDB use the value of the partition key?**
+- **Explain the Data Distribution model for items stored with _only_ a partition key.**
+- **Explain the Data Distribution model for items stored with _both_ a partition key and sort key.**
+- **What is required to read an item from a table with a composite primary key?**
+- **Is there a upper limit to the number of distinct sort key values per partition key value?**
+- **Is the data stored in global secondary indexes stored separately from the data in the base table?**
+
 ---
 
 ### Answers
@@ -120,7 +136,7 @@ https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Core
 
 - **What does it mean for an attribute to be scalar?**
 
-  > they can have only one value. Strings and numbers are common examples of scalars.
+  > They can have only one value. Strings and numbers are common examples of scalars.
 
 - **Items can have nested attributes, how deep of nest does DynamoDB support?**
 
@@ -132,31 +148,35 @@ https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Core
 
 - **What is a Partition key?**
 
-  > A simple primary key, composed of one attribute known as the partition key.
+  > A unique attribute used to identify a given item in a table. A simple primary key is composed of one attribute known as the partition key.
 
 - **What is a Composite key?**
 
   > A Partition Key + a Sort Key. Referred to as a composite primary key, this type of key is composed of two attributes. The first attribute is the partition key, and the second attribute is the sort key.
 
-- **In a table that has only a partition key, can two items can have the same partition key value?**
+- **In a table that has only simple primary keys, can two items can share the same primary key value?**
 
-  > No. Each partition key's value is used by DynamoDB's internal hash function to determine where to physically store (partition) the data in memory.
+  > No. Each partition key's value is used by DynamoDB's internal hash function to determine where to physically store (partition) the data in memory. Two keys sharing the same address would result in a conflict.
 
-- **In a table that has a partition key _and_ and sort key, are the items sharing the same partition key stored together?**
+- **In a table that uses a partition key _and_ and sort key (composite primary keys), are the items sharing the same partition key stored together?**
 
   > Yes. The partition key is used in the internal hash function in DynamoDB. The output of the internal hash function determines the partition (physical storage internal to DynamoDB) in which it is stored. All items with the same partition key value are stored together, in sorted order by key value.
 
 - **Must each primary key be scalar?**
 
-  > Each primary key attribute must be a scalar (meaning that it can hold only a single value). The only data types allowed for primary key attributes are string, number, or binary. There are no such restrictions for other, non-key attributes.
+  > Yes. Each primary key attribute must be a scalar (meaning that it can hold only a single value). The only data types allowed for primary key attributes are string, number, or binary. There are no such restrictions for other, non-key attributes.
 
 - **How does DynamoDB use a partition key's value?**
 
   > DynamoDB uses the value from the partition key in the internal hash function to determine the physical address in which to store the associated item.
 
+- **What are the three acceptable types for key values?**
+
+  > Strings, Numbers, and Binaries.
+
 - **Why is a partition also called a hash attribute, why is a sort key called a range attribute?**
 
-  > A partition key is also called a hash attribute because petition keys are used in the internal DynamoDB hashing function that determine the partition in memory for the item.
+  > A partition key is also called a hash attribute because partition keys are used in the internal DynamoDB hashing function that determine the partition in memory for the item. Sort keys are used to sort items that share the same address in memory.
 
 - **Explain how using a composite key provides extra flexibility when querying data.**
 
@@ -184,11 +204,11 @@ https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Core
 
 - **Every index belongs to a table, what is this table called? What would an example of this be?**
 
-  > The table is called a base table. Every index must have a base table. Music table could be a base table, the index (global in this case) could be called GenreAlbumTitle and would at a minimum have the partition and sort keys of the base table as attributes in addition to a unique partition and sort key derived from attributes projected from the base table.
+  > The table is called a base table. Every index must have a base table. Music table could be a base table, the index (global in this case) could be called GenreAlbumTitle and would, at a minimum, have the partition and sort keys of the base table as attributes in addition to a unique partition and sort key derived from attributes projected from the base table.
 
 - **Does DynamoDB maintain indexes automatically? What does this mean?**
 
-  > When you add, update, or delete an item on the base table, DynamoDB adds, updates, or deletes the corresponding item in any indexes belonging to that table.
+  > Yes. When you add, update, or delete an item on the base table, DynamoDB adds, updates, or deletes the corresponding item in any indexes belonging to that table.
 
 - **What is the term used for copying attributes from a base table into an index?**
 
@@ -200,7 +220,7 @@ https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Core
 
 - **What are DynamoDB Streams?**
 
-  > An optional feature that captures data modification events on DynamoDB tables. The data about these events appear in the stream in near-real time and in the other they occurred.
+  > An optional feature that captures data modification events on DynamoDB tables. The data about these events appear in the stream in near real-time and in the other they occurred.
 
 - **Which events trigger a stream record, what data is stored for each type?**
 
@@ -274,7 +294,7 @@ https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Core
 
 - **Explain `UpdateItem`.**
 
-> UpdateItem – Modifies one or more attributes in an item. You must specify the primary key for the item that you want to modify. You can add new attributes and modify or remove existing attributes. You can also perform conditional updates, so that the update is only successful when a user-defined condition is met. Optionally, you can implement an atomic counter, which increments or decrements a numeric attribute without interfering with other write requests.
+  > UpdateItem – Modifies one or more attributes in an item. You must specify the primary key for the item that you want to modify. You can add new attributes and modify or remove existing attributes. You can also perform conditional updates, so that the update is only successful when a user-defined condition is met. Optionally, you can implement an atomic counter, which increments or decrements a numeric attribute without interfering with other write requests.
 
 - **How does the an atomic counter work in regards to updating items?**
 
@@ -464,6 +484,57 @@ https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Core
 - **Is reserved capacity available on on-demand mode?**
 
   > No. Reserved capacity is not available in on-demand mode.
+
+- **What is a partition and what are they stored on in DynamoDB?**
+
+  > A partition is an allocation of storage for a table, backed by solid state drives and automatically replicated across multiple AZs in a given region.
+
+- **How many regions does a DynamoDB table exist on?**
+
+  > One region. Any tables that share the same name in other regions are _completely_ different tables and in no way related to the table in question.
+
+- **Is partition management a managed service?**
+
+  > Yes. DynamoDB automatically manages your partitions.
+
+- **What are the two statuses of tables during creation? What happens during the first stage?**
+
+  > `CREATING` and `ACTIVE`. During the creating phase, DynamoDB allocates sufficient partitions to the table so that i can handle your provisioned throughput requirements. You can begin writing after the table status changes to ACTIVE.
+
+- **What two situations would cause DynamoDB to allocate additional partitions to a table?**
+
+  > If you increase the table's provisioned throughput settings beyond what the existing partitions can support. If an existing partition fills to capacity and more storage space is required.
+
+- **Is your table available throughout partition operations happening automatically in the background?**
+
+  > Yes.
+
+- **If your table has a simple primary key, what does DynamoDB store and retrieve items based on?**
+
+  > DynamoDB uses the partition key's value to determine the partition in memory.
+
+- **How does DynamoDB use the value of the partition key?**
+
+  > DynamoDB passes the partition key's value into the internal hash function which generates an output. The output determines where the partition in memory will exist.
+
+- **Explain the Data Distribution model for items stored with _only_ a partition key.**
+
+  > For items only stored with a partition key the distribution model will use that partition keys value to store the item in a particular partition key. DynamoBD is optimized for uniform distribution of items across a tables partition, no matter how many partitions there may be. Therefore, it is recommended to choose a partition key that has a large number of distinct values.
+
+- **Explain the Data Distribution model for items stored with _both_ a partition key and sort key.**
+
+  > The partition key is used to store the item in memory and the sort key is used to sort (in ascending order by default) items sharing the same partition key within the same partition in memory.
+
+- **What is required to read an item from a table with a composite primary key?**
+
+  > You need both the partition and sort key. If you use the `Query` command you can use just the partition key to return all the items from a given partition.
+
+- **Is there a upper limit to the number of distinct sort key values per partition key value?**
+
+  > No. DynamoDB will automatically handle enough storage to handle any requirement.
+
+- **Is the data stored in global secondary indexes stored separately from the data in the base table?**
+  > Yes. Global secondary indexes in DynamoDB are also composed of partitions. The data in a global secondary index is stored separately from the data in its base table, but index partitions behave in much the same way as table partitions.
 
 ---
 
