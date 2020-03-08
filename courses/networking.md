@@ -320,3 +320,48 @@ A range of IP addresses in your VPC. A public subnet is used for resources that 
 - What is transitive peering? Does AWS VPC support it?
 - How many subnets can exist in an AZ?
 - Network ACLs, Security groups. Which is stateful and which is statless?
+
+---
+
+# IPv4, CIDR, VPC Subnets, etc
+
+> https://www.youtube.com/watch?v=z07HTSzzp3o
+
+## IP Address
+
+- How devices communicate on a network
+- 32-bit value
+- `172.16.0.0` is comprised of 4 octets of a total of 32-bits
+
+### Classful Networking
+
+- **Class A**
+
+  - 0 + 7 bits (net id) + 24 bits (host id)
+
+- **Class B**
+
+  - 1 + 0 + 14 bits (net id) + 16 bits (host id)
+
+- **Class C**
+
+  - 1 + 1 + 0 + 14 bits (net id) + 8 bits (host id)
+
+### NAT & CIDER
+
+- Packet re-routing to private IPs
+
+#### NAT Example
+
+> Network Address Translation
+
+- Reduces IPv4 Exhaustion
+
+A Network Address Translation device allows traffic from private IPs (think your TV, laptop, internet-connected toothbrush) to communicate with the internet. However, **these private devices within your local network do connect to the internet directly.** Rather, their traffic is sent to a router (aka NAT device) which adds the private IP address to a table, wraps the packet with metadata, and then sends out the traffic using the **router's IP address**. Unlike the private devices, the router actually has one of the limited IP addresses and thanks to this architecture `n` private addresses can exist behind a NAT device without ever directly consuming an IPv4 address. When traffic returns from the internet, it is matched against the NAT's routing table and directed back to the host that initiated the original communication.
+
+#### CIDR
+
+> Classless Inter-Domain Routing
+
+- Simplifies routing tables
+- Reduces IPv4 Exhaustion
