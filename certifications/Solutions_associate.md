@@ -1070,6 +1070,72 @@ Handling SOAP - SOAP applications send their responses in XML format. API Gatewa
 
 ---
 
+## DynamoDB
+
+Amazon DynamoDB is a fast and flexible noSQL database service for all applications that need consistent, single-digit millisecond latency, at any scale. It is a fully managed database and supports both document and key-value data models. Its flexible data model and reliable performance make it a great fit for mobile, web, gaming, ad-tech, IoT, and many other applications.
+
+- Stored on SSD storage
+- Spread across 3 geographically distinct data centers
+- Choice of two consistency models:
+
+  - Eventual Consistency Reads (default)
+  - Strongly Consistent Reads
+
+- Data is stored in Tables, Items (rows), Attributes (column)
+- Documents can be written in JSON, HTML or XML
+
+#### Primary Keys
+
+- Two types:
+  - **Partition Key** - unique attribute (user ID)
+    - value of the Partition key is input as an internal hash function which determines the partition or physical location on which the data is stored
+    - if you are using the partition key as your primary key, then no two items can have the same partition key
+  - **Composite Key** - Partition key + Sort key
+    - User Id + Time stamp of the post (Sort Key)
+    - Allows you to store multiple items with the same Partition Key
+
+```
+{
+  "userId": 19311,   // Partition Key
+  "firstName": "Allen",
+  "lastName": "Worchester",
+  "courseName": "AWS_Developer_Associate"  // Sort Key
+}
+```
+
+#### Access Control
+
+- Authentication and Access Control is managed through AWS IAM
+- You can create an IAM user within your AWS account which has specific permissions to create DynamoDB tables
+- You can create an IAM role which enables you to obtain temporary access keys which can be used to access DynamoDB
+- You can use a special **IAM Condition** to restrict user access _only_ to their own records
+
+### Exam Tips:
+
+- DynamoDB is a low latency NoSQL database
+- Consists of Tables, Items, and Attributes
+- Supports both document and key-value data models
+- Supports JSON, HTML, XML
+- 2 Types of Primary Key - Partition Key / Partition Key + Sort Key (Composite Key)
+- 2 consistency models: strongly consistent / eventually consistent
+- Access is controlled with IAM policies
+- `dynamodb:LeadingKeys` allows users to access only the items where the partition key values matches their user ID
+
+### Questions:
+
+- Describe DynamoDB
+- What data models does DynamoDB support?
+- What type of Hard drive does DynamoDB use?
+- How many data centers is data stored across?
+- What are the two consistency models?
+- What are the two types of primary keys, explain each and a use case.
+- What are four ways to handle access control?
+- What is a use case for using IAM Conditions in DynamoDB?
+- What languages does DynamoDB support?
+- How is access handled with DynamoDB
+
+---
+
 ## Review Section
 
 > This section is designed to provide a comprehensive review of the entire lesson. Questions are written more as statements or keywords and designed to be talked about by yourself or with a partner. You should aim to speak confidently about the topics and review material when needed. Be honest with your results.
