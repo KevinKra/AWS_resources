@@ -319,7 +319,7 @@ A range of IP addresses in your VPC. A public subnet is used for resources that 
 - What configuration is peering handled in?
 - What is transitive peering? Does AWS VPC support it?
 - How many subnets can exist in an AZ?
-- Network ACLs, Security groups. Which is stateful and which is statless?
+- Network ACLs, Security groups. Which is stateful and which is stateless?
 
 ---
 
