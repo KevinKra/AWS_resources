@@ -339,13 +339,13 @@ f. [Review Section](#review-section)
 
 #### SUMMARY: EBS
 
-- Elastic Band Store
-- EBS is basically a virtual HDD in the cloud.
+- Elastic Block Store
+- EBS is basically a virtual hard drive in the cloud.
 - EC2 termination protection is **off** by default
-- EBS-backed instances, the **default action is for the root EBS volume to be deleted** when the EC2 instance is terminated. **Additional EBS volumes will persist.**
-- EBS Root Volumes of your **DEFAULT** AMI's cannot be encrypted. You can also use a third party tool to encrypt the root volume, or this can be done when create AMI's in the AWS console or using the API. Steps mentioned in notes.
-- Additional, EBS volumes can be encrypted.
-- Various EBS types both in SSD and HDD.
+- EBS-backed instances, the **default action is for the _root EBS_ volume to be deleted** when the EC2 instance is terminated. **Additional EBS volumes will persist.**
+- EBS Root Volumes of your **DEFAULT** AMI's cannot be encrypted. You can also use a third party tool to encrypt the root volume, or this can be done when creating AMI's in the AWS console or using the API. Steps mentioned in notes.
+- Additional EBS volumes can be encrypted.
+- There are various EBS types both in SSD and HDD.
 
 #### SUMMARY: Security Groups
 
@@ -356,8 +356,8 @@ f. [Review Section](#review-section)
 - Can have multiple security groups attached to EC2 instances.
 - Security groups are **Stateful**, if you open a port it will be open for both inbound and outbound traffic.
 - Network ACLs are **Stateless**. You will need to open _both_ the inbound and outbound traffic. Covered in VPC section.
-- You cannot bock specific IP addresses using Security Groups, instead use Network Access Control Lists. Covered in VPC section.
-- Can specify allow rules, but not deny rules.
+- You cannot block specific IP addresses using Security Groups, instead use Network Access Control Lists. Covered in VPC section.
+- Can specify allow rules, but not deny rules. ie Security Groups whitelist traffic.
 
 #### SUMMARY: EBS Snapshots
 
@@ -365,8 +365,8 @@ f. [Review Section](#review-section)
 - Snapshots exist on S3.
 - Snapshots are point in time copies of Volumes.
 - Snapshots are incremental. Only blocks that have changed since your last snapshot are moved to S3.
-- Your first snapshot may take some time to create. Future snapshots only replicate the deltas (changes.)
-- Optional. To create a snapshot for Amazon EBS volumes that serve as root devices (where the OS is installed), you should stop the instance before taking the snapshot.
+- Your first snapshot may take some time to create. Future snapshots only replicate the deltas (changes).
+- To create a snapshot for Amazon EBS volumes that serve as root devices (where the OS is installed), you should stop the instance before taking the snapshot.
 - You can create AMI's from both Volumes and Snapshots.
 - You can change EBS volume sizes on the fly, including the size and storage type.
 - **Volumes will ALWAYS be in the same availability zone as the EC2 instance**.
@@ -382,7 +382,7 @@ f. [Review Section](#review-section)
 - Volumes restored from encrypted snapshots are encrypted automatically.
 - You can share snapshots, but only if they're unencrypted.
 - Unencrypted snapshots can be shared with other AWS accounts or made public.
-- Root Device Volumes can be encrypted. If you have an already existing unencrypted root device volumes then a series of steps need to be follow. Described in notes below.
+- Root Device Volumes can be encrypted. If you have an already existing unencrypted root device volumes then a series of steps need to be followed. Described in notes below.
 
 #### SUMMARY: EBS vs Instance Store
 
@@ -400,7 +400,7 @@ f. [Review Section](#review-section)
 - You can have 1 minute intervals by turning on detailed monitoring.
 - You can create CloudWatch alarms which trigger notifications.
 - CloudWatch is about performance, CloudTrail is about auditing.
-- CloundTrail monitors API calls in the AWS environment.
+- CloudTrail monitors API calls in the AWS environment.
 - Can create Dashboards.
 - Can create Events.
 - Can create Logs to aggregate, monitor, and store logging data.
@@ -423,7 +423,7 @@ f. [Review Section](#review-section)
 - Spread Placement Group: For individual critical EC2 instances. In different AZ zones and devices.
 - Partitioned: Multiple EC2 instances of HDFS, Hbase, and cassandra.
 - Spread Placement Groups can be deployed across availability zones since they spread the instances further apart. Cluster Placement Groups can only exist in one Availability Zone since they are focused on keeping instances together, which you cannot do across Availability Zones
-- Clustered placement does not span multiple AZ, spread and partitioned can.
+- Clustered placements do not span multiple AZs, Spread and Partitioned placements can.
 - The name you specify for a placement group must be unique within your AWS account.
 - Only certain types of EC2 instances can be launched in a placement group (Compute Optimized, GPU, Memory Optimized, Storage Optimized)
 - AWS recommends homogenous instances within clustered placement groups.
@@ -591,33 +591,108 @@ U-6tb1 - Bare Metal - Bare metal capabilities that eliminate virtualization over
 - **What are the EC2 types and their respective use cases?**
 
 - **Is termination protection on or off by default?**
-  _By default EC2 termination protection is off_
 
 - **On an EBS-backed instance, is the default action to delete the root EBS volume when the instance is deleted?**
-  _Yes. If you terminate your EC2 instance you're also going to terminate your virtual HDD as well. Can be changed to not do this._
 
 - **Can the EBS Root Volumes of your DEFAULT AMI's be encrypted?**
-  _No, but third party tools (like bit locker) can be used to encrypt the root volume_
 
 - **Can additional EC2 instance volumes be encrypted?**
-  _Yes._
 
 - **Which EC2 volume is the device OS installed onto?**
-  _The root volume_
 
 - **If you make a rule change to a security group, how quickly does it take affect?**
-  _Immediately._
 
 - **What happens if you delete an outbound rule in an EC2 instance?**
-  _Nothing, security groups are stateful. When you create an inbound rule an outbound rule is automatically created._
 
 - **Can you blacklist ports or IP addresses with security groups?**
-  _Nope. That said, security groups work by blocking everything by default, you as the developer have to allow traffic access manually. In order to block specific IP addresses you would use Network Access Control Lists_
 
 - **Can you attach more than one security group to an EC2 instance?**
-  _Yes. Actions > Networking > Change Security Groups_
 
----
+- !!!
+
+* **Are SGs stateful or stateless, what does this mean?**
+
+* **Are NACLs stateful or stateless, what does this mean?**
+
+* **Can you block specific IP addresses with SGs?**
+
+- **Where are EBS snapshots saved? What does it mean that they are incremental?**
+
+- **Can you take an EBS snapshot of your root volume? What should you do beforehand?**
+
+- **Do EBS volumes have to be in the same AZ as their EC2 instance counterpart?**
+
+- **What steps must you take in order to migrate an EC2 Instance from one _AZ_ to another?**
+
+- **What steps must you take in order to migrate an EC2 Instance from one _Region_ to another?**
+
+- **Are snapshots of encrypted volumes automatically encrypted themselves?**
+
+- **Are volumes restored from encrypted snapshots encrypted automatically?**
+
+- **Can you share encrypted snapshots?**
+
+- **If you want to share a snapshot with other AWS accounts or make it public, what must you do?**
+
+- **Can Root Volumes be encrypted?**
+
+- **Can originally un-encrypted root volumes be encrypted?**
+
+- **What is an Instance Store Volume (ISV) and how does it differ from EBS?**
+
+- **What is Ephemeral Storage?**
+
+- **Can Instance Store Volumes be stopped, can EBS volumes be stopped?**
+
+- **Can either ISV or EBS volumes installed on root devices be saved if the underlying EC2 instance is terminated?**
+
+- **What is CloudWatch used for?**
+
+- **What is the default increment monitoring setting for CloudWatch with EC2?**
+
+- **What is the overview difference between CloudWatch and CloudTrail?**
+
+- **Does CloudWatch or CloudTrail monitor API calls in the AWS environment?**
+
+- **CloudWatch can create Dashboards, events, and logs. What do these features do?**
+
+- **What is EFS?**
+
+- **What are Placement Groups?**
+
+- **What are the three types of placement groups?**
+
+- **Describe Clustered Placement Groups.**
+
+- **Describe Spread Placement Groups.**
+
+- **Describe Partitioned Placement Groups.**
+
+- **Which placement groups can span multiple AZs, which Placement Group is confined to one AZ?**
+
+- **Are there any restrictions to which EC2 instance types can be placed into placement groups?**
+
+- **Does AWS recommend homogenous or heterogenous instances within clustered placement groups?**
+
+- **Can you merge placement groups?**
+
+- **Can you move an existing EC2 instance into placement group? What is a solution?**
+
+- **What are the four EC2 pricing models?**
+
+- **Describe the On Demand pricing model.**
+
+- **Describe the Reserved pricing model.**
+
+- **Describe the Spot pricing model.**
+
+- **Describe the Dedicated Host pricing model.**
+
+- **Describe Standard Reserved Instances.**
+
+- **Describe Convertible Reserved Instances.**
+
+- **Describe Scheduled Reserved Instances.**
 
 ## EBS 101
 
@@ -1140,116 +1215,42 @@ Amazon DynamoDB is a fast and flexible noSQL database service for all applicatio
 
 > This section is designed to provide a comprehensive review of the entire lesson. Questions are written more as statements or keywords and designed to be talked about by yourself or with a partner. You should aim to speak confidently about the topics and review material when needed. Be honest with your results.
 
-- What risks does AWS mitigate for businesses?
-- Why is AWS suitable for both small start ups and large companies?
-- When was AWS launched?
-- What were AWS certificates released?
-- What is AWS Global infrastructure?
-- What is an Availability Zone?
-- What is an AWS Region?
-- What are Edge Locations?
-- Explain Amazon VPC.
-- Where is CloudFront data cached?
-- What does IAM stand for, what is its purpose?
-- What are identity federations?
-- What are the 4 IAM permission types?
-- Explain each IAM permission type.
-- What format are policy documents written in?
-- What does JSON stand for?
-- What is a billing alarm?
-- What is a root account, what permissions does it have?
-- Explain the steps to setup a billing alarm.
-- Is IAM limited to a region or is it universal, why?
-- Do users have permissions when they're first created?
-- What are users assigned when they're first created?
-- Can you use the Access Key ID and Secret Access Key to login into the console?
-- Explain the process to disable or deactivate an access key.
-- Can you continue to look at a user's keys after they're generated?
-- Should you have MFA on your root account?
-- Explain the process for creating and customizing password policy rules.
-- How would you protect your account from being over-billed?
-- What does S3 stand for?
-- Describe S3.
-- S3 is Object based. What does that mean?
-- What is the file size range for files uploaded to S3?
-- Does S3 allow unlimited storage?
-- What is the name used for directories in S3?
-- What is the name of data stored in S3 directories?
-- S3 is a universal name space, what does that mean?
-- What kind of response do you receive when you upload a file to S3?
-- Explain tiered storage.
-- Explain life-cycle management in S3.
-- Explain versioning in S3.
-- Explain encryption in S3.
-- What does MFA Delete mean and why is it important?
-- What are Access Control Lists and Bucket Policies, what are they for?
-- S3 Objects have several (5) values associated with them, what are they?
-- What is data consistency?
-- How does data consistency work in S3?
-- What is S3's guarantee?
-- What are the S3 Storage classes / S3 Storage tiers.
-- Explain S3 Standard, what it is suitable for?
-- Explain S3 - IA, what it is suitable for?
-- Explain S3 One Zone - IA, what it is suitable for?
-- Explain S3 Intelligent Tiering, what benefits does it provide?
-- Explain S3 Glacier, what it is suitable for?
-- Explain S3 Glacier Deep Archive, what it is suitable for?
-- What 5 things does S3 charge for?
-- What is transfer acceleration, how does it work?
-- What is cross region replication, how does it work?
-- What does RRS stand for?
-- Can MFA be used in S3, in what regard?
-- What is S3 designed for, is it suitable for databases?
-- What happens if you make a bucket / object public?
-- Can buckets and objects have their respective storage classes modified?
-- What is the default public setting for new buckets?
-- What can you use to control access to your bucket?
-- Can access logs be created for buckets? Where can the logs be stored?
-- What is encryption in transit, what is an example?
-- SSL/TLS are used for what type of encryption?
-- What is Encryption at Rest, what two environments can it be handled?
-- What are the four types of server-side encryption?
-- Explain SSE-S3.
-- Explain SSE-KMS.
-- Explain SSE-C.
-- Explain Client Side encryption.
-- What is S3 Version Control.
-- Can S3 versioning be disabled once initiated?
-- Can S3 versioning be suspended?
-- Can S3 versioning be integrated with lifecycles rules?
-- Can S3 versioning come with MFA delete capability?
-- What happens when you utilize versioning in S3?
-- What happens if you delete a versioned file?
-- How would you restore an object with versioning if you've already deleted it?
-- What do S3 Lifecycles accomplish, how would they interact with versioning?
-- What does EC2 stand for?
-- What does EC2 accomplish?
-- What were the challenges that EC2 solved?
-- What are the 4 pricing models for EC2?
-- Explain each EC2 pricing model in detail.
-- What is the On Demand model suitable for?
-- What is the Reserved model suitable for?
-- What are the 3 types of reserved instances?
-- What is the Sport Pricing model suitable for?
-- What is the Dedicated Host model suitable for?
-- What is the EC2 Instance Type mnemonic phrase?
-- What are the 14 EC2 Instance types, what are they suitable for?
-- Relational databases are comprised of what?
-- What 6 relation databases are supported by AWS?
-- What does RDS stand for?
-- What are the two key features that RDS provides?
-- Explain Multi-AZ.
-- Explain Read Replicas.
-- What is DynamoDB?
-- What are the 4 features of DynamoDB?
-- Is EC2 termination protection on or off by default?
-- On an EBS-backed instance, is the default action to delete the root EBS volume when the instance is deleted?
-- Can the EBS Root Volumes of your DEFAULT AMI's be encrypted?
-- Which EC2 volume is the device OS installed onto?
-- Security Groups are stateful, what does that mean?
-- If you make a rule change to a security group, how quickly does it take affect?
-- What happens if you delete an outbound rule in an EC2 instance?
-- Can you blacklist ports or IP addresses with security groups?
-- Can you attach more than one security group to an EC2 instance?
-- If an Amazon EBS volume is an additional partition (not the root volume), can I detach it without stopping the instance?
-- Can you add multiple volumes to an EC2 instance and then create your own RAID 5/RAID 10/RAID 0 configurations using those volumes.
+### EC2, EBS, EFS
+
+#### Answers
+
+- **Explain EC2.**
+
+- **How many different instance price models are there and what are their details?**
+
+- **How many types of reserved instances exist and what are their details?**
+
+- **What are the EC2 types and their respective use cases?**
+
+- **Is termination protection on or off by default?**
+
+  _By default EC2 termination protection is off_
+
+- **On an EBS-backed instance, is the default action to delete the root EBS volume when the instance is deleted?**
+  _Yes. If you terminate your EC2 instance you're also going to terminate your virtual HDD as well. Can be changed to not do this._
+
+- **Can the EBS Root Volumes of your DEFAULT AMI's be encrypted?**
+  _No, but third party tools (like bit locker) can be used to encrypt the root volume_
+
+- **Can additional EC2 instance volumes be encrypted?**
+  _Yes._
+
+- **Which EC2 volume is the device OS installed onto?**
+  _The root volume_
+
+- **If you make a rule change to a security group, how quickly does it take affect?**
+  _Immediately._
+
+- **What happens if you delete an outbound rule in an EC2 instance?**
+  _Nothing, security groups are stateful. When you create an inbound rule an outbound rule is automatically created._
+
+- **Can you blacklist ports or IP addresses with security groups?**
+  _Nope. That said, security groups work by blocking everything by default, you as the developer have to allow traffic access manually. In order to block specific IP addresses you would use Network Access Control Lists_
+
+- **Can you attach more than one security group to an EC2 instance?**
+  _Yes. Actions > Networking > Change Security Groups_
